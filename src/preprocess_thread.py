@@ -19,6 +19,7 @@ def preprocess(i, thread_num, lock, f_lines, max_line):
 
     process_short_path = os.path.join(process_path, 'short')
     process_long_path = os.path.join(process_path, 'long')
+    
     # for index in tqdm(range(len(f_lines))):
     index = i
     while(index < max_line):

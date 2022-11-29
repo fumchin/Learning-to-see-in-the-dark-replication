@@ -8,8 +8,9 @@ val_preprocess_file_name = "val_preprocess_list.txt"
 
 
 # training parameters
-model_name = "unet_test_1"
+model_name = "test_1122"
 learning_rate = 0.0001
 batch_size = 6
 epochs = 100
 patch_size = 512 * 3
+amp_ratio = 300
