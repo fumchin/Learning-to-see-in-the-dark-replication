@@ -71,8 +71,9 @@ if __name__ == "__main__":
     
     # train preprocess
     f_lines = open(os.path.join(root, val_file_name), 'r').readlines()
+    # f_lines = open(os.path.join(root, train_file_name), 'r').readlines()
     
-    thread_num = 10
+    thread_num = 50
     max_line = len((f_lines))
     threads = []
     lock = threading.Lock()
