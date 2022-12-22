@@ -8,8 +8,8 @@ val_preprocess_file_name = "val_preprocess_list.txt"
 
 
 # training parameters
-model_name = "1221"
-learning_rate = 0.0001
+model_name = "1222_reduce_mean"
+learning_rate = 0.0005
 batch_size = 4
 epochs = 100
 patch_size = 512 * 3

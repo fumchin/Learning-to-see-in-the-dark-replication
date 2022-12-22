@@ -83,6 +83,6 @@ if __name__ == '__main__':
                 target_img = torch.tensor(target_img)
                 target_img = target_img.permute(1, 2, 0)
                 target_img = target_img.detach().cpu().numpy()
-                target_img = ((target_img/np.max(target_img))*255).astype(np.uint8)
+                # target_img = ((target_img/np.max(target_img))*255).astype(np.uint8)
                 imageio.imwrite(os.path.join(demo_path, 'target_' + str(count) + '_' + str(index) + ".png"),target_img) 
 

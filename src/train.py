@@ -101,7 +101,9 @@ def train(model, train_dataloader, validation_dataloader, loss_fn, optimizer, de
         plt.plot(epoch_list, validation_ssim_list, 'r')
         plt.savefig(os.path.join(checkpoint_path, f'{cfg.model_name}_ssim.png'))
 
-
+def reduce_mean(out_im, gt_im):
+    return torch.abs(out_im - gt_im).mean()
+    
 def train_single_epoch(model, train_dataloader, validation_dataloader, loss_fn, optimizer, device):
     training_loss = 0
     validation_loss = 0
@@ -114,7 +116,8 @@ def train_single_epoch(model, train_dataloader, validation_dataloader, loss_fn, 
     for input, target in tqdm(train_dataloader):
         input, target = input.to(device), target.to(device)
         prediction = model(input)
-        loss = loss_fn(prediction, target)
+        # loss = loss_fn(prediction, target)
+        loss = reduce_mean(prediction, target)
         training_loss += loss.item()
         psnr = peak_signal_noise_ratio(prediction, target)
         training_psnr += psnr.item()
@@ -131,7 +134,8 @@ def train_single_epoch(model, train_dataloader, validation_dataloader, loss_fn, 
     for input, target in tqdm(validation_dataloader):
         input, target = input.to(device), target.to(device)
         prediction = model(input)
-        loss = loss_fn(prediction, target)
+        # loss = loss_fn(prediction, target)
+        loss = reduce_mean(prediction, target)
         validation_loss += loss.item()
 
         psnr = peak_signal_noise_ratio(prediction, target)

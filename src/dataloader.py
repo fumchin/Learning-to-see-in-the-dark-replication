@@ -161,7 +161,7 @@ class FujiDataset(Dataset):
         
 
         
-        # # 0 R
+        # 0 R
         # out[0::2, 0::2, 0] = im[0:H:6, 0:W:6]
         # out[0::2, 1::2, 0] = im[0:H:6, 4:W:6]
         # out[1::2, 0::2, 0] = im[3:H:6, 1:W:6]
@@ -248,6 +248,7 @@ class FujiDataset_eval(Dataset):
         # target_rgb_save = Image.fromarray((target_rgb*255).astype(np.uint8))
         # src_img = Image.fromarray((src_img))
         # target_rgb_save.save(os.path.join("./apple.png"))
+        target_rgb = (target_rgb/np.max(target_rgb))
         target_rgb = torch.tensor(target_rgb)
         target_rgb = target_rgb.permute(2, 0, 1)
         
@@ -278,7 +279,7 @@ class FujiDataset_eval(Dataset):
 
         out = np.zeros((H // 3, W // 3, 9))
 
-        # R
+        R
         out[0::2, 0::2, 0] = im[0:H:6, 4:W:6]
         out[0::2, 1::2, 0] = im[1:H:6, 2:W:6]
         out[1::2, 0::2, 0] = im[1:H:6, 0:W:6]
@@ -341,7 +342,7 @@ class FujiDataset_eval(Dataset):
         # out[1::2, 0::2, 8] = im[5:H:6, 0:W:6]
         # out[1::2, 1::2, 8] = im[4:H:6, 3:W:6]
 
-        # 0 R
+        # # 0 R
         # out[0::2, 0::2, 0] = im[0:H:6, 0:W:6]
         # out[0::2, 1::2, 0] = im[0:H:6, 4:W:6]
         # out[1::2, 0::2, 0] = im[3:H:6, 1:W:6]
