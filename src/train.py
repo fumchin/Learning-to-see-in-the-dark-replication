@@ -5,6 +5,7 @@ import random
 from glob import glob
 from itertools import cycle
 from torchmetrics.functional import peak_signal_noise_ratio, structural_similarity_index_measure
+from torchvision import transforms
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -156,7 +157,13 @@ if __name__ == '__main__':
     else:
         device = "cpu"
 
-    train_dataset = FujiDataset(cfg.root, cfg.train_preprocess_file_name, None)
+    transform = transforms.Compose([
+        transforms.ToPILImage(),
+        transforms.RandomHorizontalFlip(p=0.5),
+        transforms.RandomVerticalFlip(p=0.5)
+        # transforms.RandomRotation((180))
+    ])
+    train_dataset = FujiDataset(cfg.root, cfg.train_preprocess_file_name, transform)
     validation_dataset = FujiDataset(cfg.root, cfg.val_preprocess_file_name, None)
     test_dataset = FujiDataset(cfg.root, cfg.test_file_name, None)
     

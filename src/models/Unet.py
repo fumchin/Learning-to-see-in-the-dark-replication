@@ -100,6 +100,7 @@ class UNet(nn.Module):
         output = self.output(x_u4)
         # output = output.permute(0, 2, 3, 1)
         output = self.pf(output)
+        # output = np.uint8(output)
         return output
 
        

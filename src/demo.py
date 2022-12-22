@@ -14,7 +14,7 @@ import torch.nn as nn
 from torch.utils.data import DataLoader, TensorDataset
 from tqdm import tqdm
 import imageio
-import config as cfg
+import demo_config as cfg
 from dataloader import FujiDataset, FujiDataset_eval
 from models.Unet import UNet
 matplotlib.use('Agg')
@@ -24,14 +24,14 @@ if __name__ == '__main__':
 
     checkpoint_path = os.path.join('/home/fumchin/data/cv/final/src/stored_data', cfg.model_name)
     src_path = "/home/fumchin/data/cv/final/dataset/Fuji/short"
-    if not os.path.exists(checkpoint_path):
-        os.makedirs(checkpoint_path)
+    # if not os.path.exists(checkpoint_path):
+    #     os.makedirs(checkpoint_path)
 
-    # if torch.cuda.is_available():
-    #     device = "cuda"
-    # else:
-    #     device = "cpu"
-    device = "cpu"
+    if torch.cuda.is_available():
+        device = "cuda"
+    else:
+        device = "cpu"
+    # device = "cpu"
     train_dataset = FujiDataset_eval(cfg.root, cfg.test_file_name, None)
     validation_dataset = FujiDataset_eval(cfg.root, cfg.val_file_name, None)
     test_dataset = FujiDataset_eval(cfg.root, cfg.test_file_name, None)
@@ -47,7 +47,8 @@ if __name__ == '__main__':
     model_eval.load_state_dict(best_checkpoint['model_state_dict'])
     model_eval.eval()
     # loss_fn = nn.L1Loss()
-    demo_path = os.path.join(checkpoint_path, 'demo_train_full')
+    demo_path = os.path.join(checkpoint_path, 'demo_train')
+    
     if not os.path.exists(os.path.join(demo_path)):
         os.makedirs(demo_path)
     with torch.no_grad():
@@ -68,7 +69,7 @@ if __name__ == '__main__':
                 pred_img = pred[index, :, :,:]
                 pred_img = pred_img.permute(1, 2, 0)
                 pred_img = pred_img.detach().cpu().numpy()
-                # pred_img = (pred_img*255).astype(np.uint8)
+                # pred_img = ((pred_img/np.max(pred_img))*255).astype(np.uint8)
                 imageio.imwrite(os.path.join(demo_path, 'pred_' + str(count) + '_' + str(index) + ".png"),pred_img) 
                 
                 src_img = src[index, :, :,:]
@@ -82,6 +83,6 @@ if __name__ == '__main__':
                 target_img = torch.tensor(target_img)
                 target_img = target_img.permute(1, 2, 0)
                 target_img = target_img.detach().cpu().numpy()
-                # target_img = (target_img*255).astype(np.uint8)
+                target_img = ((target_img/np.max(target_img))*255).astype(np.uint8)
                 imageio.imwrite(os.path.join(demo_path, 'target_' + str(count) + '_' + str(index) + ".png"),target_img) 
 
