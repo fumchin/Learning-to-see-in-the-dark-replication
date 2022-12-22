@@ -85,6 +85,7 @@ class UNet(nn.Module):
         self.up3 = Up(256, 128, 128)
         self.up4 = Up(128, 64, 64)
         self.output = nn.Conv2d(64, 27, kernel_size=3, stride=1, padding=1)
+        self.sigmoid = nn.Sigmoid()
         self.pf = nn.PixelShuffle(3)
 
     def forward(self, x):
@@ -99,6 +100,7 @@ class UNet(nn.Module):
         x_u4 = self.up4(x_u3, x_1)
         output = self.output(x_u4)
         # output = output.permute(0, 2, 3, 1)
+        output = self.sigmoid(output)
         output = self.pf(output)
         # output = np.uint8(output)
         return output

@@ -8,7 +8,7 @@ val_preprocess_file_name = "val_preprocess_list.txt"
 
 
 # training parameters
-model_name = "1221"
+model_name = "1222_normalize"
 learning_rate = 0.0001
 batch_size = 4
 epochs = 100

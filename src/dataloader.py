@@ -66,6 +66,7 @@ class FujiDataset(Dataset):
         # target_rgb_save = Image.fromarray((target_rgb*255).astype(np.uint8))
         # src_img = Image.fromarray((src_img))
         # target_rgb_save.save(os.path.join("./apple.png"))
+        target_rgb = (target_rgb/np.max(target_rgb))
         target_rgb = torch.tensor(target_rgb)
         
         target_rgb = target_rgb.permute(2, 0, 1)
