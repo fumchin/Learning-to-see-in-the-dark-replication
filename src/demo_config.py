@@ -8,9 +8,11 @@ val_preprocess_file_name = "val_preprocess_list.txt"
 
 
 # training parameters
-model_name = "1222_reduce_mean"
-learning_rate = 0.0005
-batch_size = 4
+model_name = "color_fix"
+# train or val
+demo_type = "train" 
+learning_rate = 0.0001
+batch_size = 6
 epochs = 100
 patch_size = 512 * 3
-amp_ratio = 150
+amp_ratio = 100

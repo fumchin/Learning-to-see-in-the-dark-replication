@@ -53,6 +53,9 @@ class FujiDataset(Dataset):
         start_H = np.random.randint(0, H - cfg.patch_size)
         start_W = np.random.randint(0, W - cfg.patch_size)
         
+        start_H = (start_H // 6) * 6
+        start_W = (start_W // 6) * 6
+
         src_img = src_img[start_H:start_H+cfg.patch_size, start_W:start_W+cfg.patch_size]
         src_pack = self.pack(src_img)
         src_pack = torch.tensor(src_pack, dtype=torch.float32)
@@ -66,7 +69,7 @@ class FujiDataset(Dataset):
         # target_rgb_save = Image.fromarray((target_rgb*255).astype(np.uint8))
         # src_img = Image.fromarray((src_img))
         # target_rgb_save.save(os.path.join("./apple.png"))
-        target_rgb = (target_rgb/np.max(target_rgb))
+        target_rgb = (target_rgb / 65535.0) 
         target_rgb = torch.tensor(target_rgb)
         
         target_rgb = target_rgb.permute(2, 0, 1)
@@ -93,37 +96,37 @@ class FujiDataset(Dataset):
 
         out = np.zeros((H // 3, W // 3, 9))
         
-        # R
-        out[0::2, 0::2, 0] = im[0:H:6, 4:W:6]
-        out[0::2, 1::2, 0] = im[1:H:6, 2:W:6]
-        out[1::2, 0::2, 0] = im[1:H:6, 0:W:6]
-        out[1::2, 1::2, 0] = im[2:H:6, 4:W:6]
-        # R
-        out[0::2, 0::2, 1] = im[3:H:6, 1:W:6]
-        out[0::2, 1::2, 1] = im[5:H:6, 1:W:6]
-        out[1::2, 0::2, 1] = im[4:H:6, 3:W:6]
-        out[1::2, 1::2, 1] = im[4:H:6, 5:W:6]
+        # # R
+        # out[0::2, 0::2, 0] = im[0:H:6, 4:W:6]
+        # out[0::2, 1::2, 0] = im[1:H:6, 2:W:6]
+        # out[1::2, 0::2, 0] = im[1:H:6, 0:W:6]
+        # out[1::2, 1::2, 0] = im[2:H:6, 4:W:6]
+        # # R
+        # out[0::2, 0::2, 1] = im[3:H:6, 1:W:6]
+        # out[0::2, 1::2, 1] = im[5:H:6, 1:W:6]
+        # out[1::2, 0::2, 1] = im[4:H:6, 3:W:6]
+        # out[1::2, 1::2, 1] = im[4:H:6, 5:W:6]
 
-        # GGGGG
-        out[0::2, 0::2, 2] = im[1:H:6, 1:W:6]
-        out[0::2, 1::2, 2] = im[1:H:6, 4:W:6]
-        out[1::2, 0::2, 2] = im[4:H:6, 1:W:6]
-        out[1::2, 1::2, 2] = im[4:H:6, 4:W:6]
+        # # GGGGG
+        # out[0::2, 0::2, 2] = im[1:H:6, 1:W:6]
+        # out[0::2, 1::2, 2] = im[1:H:6, 4:W:6]
+        # out[1::2, 0::2, 2] = im[4:H:6, 1:W:6]
+        # out[1::2, 1::2, 2] = im[4:H:6, 4:W:6]
 
-        out[:, :, 3] = im[0:H:3, 0:W:3]
-        out[:, :, 4] = im[0:H:3, 2:W:3]
-        out[:, :, 5] = im[2:H:3, 0:W:3]
-        out[:, :, 6] = im[2:H:3, 2:W:3]
-        # B
-        out[0::2, 0::2, 7] = im[0:H:6, 1:W:6]
-        out[0::2, 1::2, 7] = im[1:H:6, 3:W:6]
-        out[1::2, 0::2, 7] = im[2:H:6, 1:W:6]
-        out[1::2, 1::2, 7] = im[1:H:6, 5:W:6]
-        # B
-        out[0::2, 0::2, 8] = im[4:H:6, 0:W:6]
-        out[0::2, 1::2, 8] = im[3:H:6, 4:W:6]
-        out[1::2, 0::2, 8] = im[4:H:6, 2:W:6]
-        out[1::2, 1::2, 8] = im[5:H:6, 4:W:6]
+        # out[:, :, 3] = im[0:H:3, 0:W:3]
+        # out[:, :, 4] = im[0:H:3, 2:W:3]
+        # out[:, :, 5] = im[2:H:3, 0:W:3]
+        # out[:, :, 6] = im[2:H:3, 2:W:3]
+        # # B
+        # out[0::2, 0::2, 7] = im[0:H:6, 1:W:6]
+        # out[0::2, 1::2, 7] = im[1:H:6, 3:W:6]
+        # out[1::2, 0::2, 7] = im[2:H:6, 1:W:6]
+        # out[1::2, 1::2, 7] = im[1:H:6, 5:W:6]
+        # # B
+        # out[0::2, 0::2, 8] = im[4:H:6, 0:W:6]
+        # out[0::2, 1::2, 8] = im[3:H:6, 4:W:6]
+        # out[1::2, 0::2, 8] = im[4:H:6, 2:W:6]
+        # out[1::2, 1::2, 8] = im[5:H:6, 4:W:6]
 
 
         # # R
@@ -162,39 +165,39 @@ class FujiDataset(Dataset):
 
         
         # 0 R
-        # out[0::2, 0::2, 0] = im[0:H:6, 0:W:6]
-        # out[0::2, 1::2, 0] = im[0:H:6, 4:W:6]
-        # out[1::2, 0::2, 0] = im[3:H:6, 1:W:6]
-        # out[1::2, 1::2, 0] = im[3:H:6, 3:W:6]
+        out[0::2, 0::2, 0] = im[0:H:6, 0:W:6]
+        out[0::2, 1::2, 0] = im[0:H:6, 4:W:6]
+        out[1::2, 0::2, 0] = im[3:H:6, 1:W:6]
+        out[1::2, 1::2, 0] = im[3:H:6, 3:W:6]
 
-        # # 1 G
-        # out[0::2, 0::2, 1] = im[0:H:6, 2:W:6]
-        # out[0::2, 1::2, 1] = im[0:H:6, 5:W:6]
-        # out[1::2, 0::2, 1] = im[3:H:6, 2:W:6]
-        # out[1::2, 1::2, 1] = im[3:H:6, 5:W:6]
+        # 1 G
+        out[0::2, 0::2, 1] = im[0:H:6, 2:W:6]
+        out[0::2, 1::2, 1] = im[0:H:6, 5:W:6]
+        out[1::2, 0::2, 1] = im[3:H:6, 2:W:6]
+        out[1::2, 1::2, 1] = im[3:H:6, 5:W:6]
 
-        # # 1 B
-        # out[0::2, 0::2, 2] = im[0:H:6, 1:W:6]
-        # out[0::2, 1::2, 2] = im[0:H:6, 3:W:6]
-        # out[1::2, 0::2, 2] = im[3:H:6, 0:W:6]
-        # out[1::2, 1::2, 2] = im[3:H:6, 4:W:6]
+        # 1 B
+        out[0::2, 0::2, 2] = im[0:H:6, 1:W:6]
+        out[0::2, 1::2, 2] = im[0:H:6, 3:W:6]
+        out[1::2, 0::2, 2] = im[3:H:6, 0:W:6]
+        out[1::2, 1::2, 2] = im[3:H:6, 4:W:6]
 
-        # # 4 R
-        # out[0::2, 0::2, 3] = im[1:H:6, 2:W:6]
-        # out[0::2, 1::2, 3] = im[2:H:6, 5:W:6]
-        # out[1::2, 0::2, 3] = im[5:H:6, 2:W:6]
-        # out[1::2, 1::2, 3] = im[4:H:6, 5:W:6]
+        # 4 R
+        out[0::2, 0::2, 3] = im[1:H:6, 2:W:6]
+        out[0::2, 1::2, 3] = im[2:H:6, 5:W:6]
+        out[1::2, 0::2, 3] = im[5:H:6, 2:W:6]
+        out[1::2, 1::2, 3] = im[4:H:6, 5:W:6]
 
-        # # 5 B
-        # out[0::2, 0::2, 4] = im[2:H:6, 2:W:6]
-        # out[0::2, 1::2, 4] = im[1:H:6, 5:W:6]
-        # out[1::2, 0::2, 4] = im[4:H:6, 2:W:6]
-        # out[1::2, 1::2, 4] = im[5:H:6, 5:W:6]
+        # 5 B
+        out[0::2, 0::2, 4] = im[2:H:6, 2:W:6]
+        out[0::2, 1::2, 4] = im[1:H:6, 5:W:6]
+        out[1::2, 0::2, 4] = im[4:H:6, 2:W:6]
+        out[1::2, 1::2, 4] = im[5:H:6, 5:W:6]
 
-        # out[:, :, 5] = im[1:H:3, 0:W:3]
-        # out[:, :, 6] = im[1:H:3, 1:W:3]
-        # out[:, :, 7] = im[2:H:3, 0:W:3]
-        # out[:, :, 8] = im[2:H:3, 1:W:3]
+        out[:, :, 5] = im[1:H:3, 0:W:3]
+        out[:, :, 6] = im[1:H:3, 1:W:3]
+        out[:, :, 7] = im[2:H:3, 0:W:3]
+        out[:, :, 8] = im[2:H:3, 1:W:3]
         return out
 
 class FujiDataset_eval(Dataset):
@@ -234,7 +237,9 @@ class FujiDataset_eval(Dataset):
 
         start_H = np.random.randint(0, H - cfg.patch_size)
         start_W = np.random.randint(0, W - cfg.patch_size)
-        
+        start_H = (start_H // 6) * 6
+        start_W = (start_W // 6) * 6
+
         # src_img = src_img[start_H:start_H+cfg.patch_size, start_W:start_W+cfg.patch_size]
         src_pack = self.pack(src_img)
         src_pack = torch.tensor(src_pack, dtype=torch.float32)
@@ -248,7 +253,7 @@ class FujiDataset_eval(Dataset):
         # target_rgb_save = Image.fromarray((target_rgb*255).astype(np.uint8))
         # src_img = Image.fromarray((src_img))
         # target_rgb_save.save(os.path.join("./apple.png"))
-        target_rgb = (target_rgb/np.max(target_rgb))
+        target_rgb = (target_rgb/ 65535.0)
         target_rgb = torch.tensor(target_rgb)
         target_rgb = target_rgb.permute(2, 0, 1)
         
@@ -279,37 +284,68 @@ class FujiDataset_eval(Dataset):
 
         out = np.zeros((H // 3, W // 3, 9))
 
-        R
-        out[0::2, 0::2, 0] = im[0:H:6, 4:W:6]
-        out[0::2, 1::2, 0] = im[1:H:6, 2:W:6]
-        out[1::2, 0::2, 0] = im[1:H:6, 0:W:6]
-        out[1::2, 1::2, 0] = im[2:H:6, 4:W:6]
+        # # R
+        # out[0::2, 0::2, 0] = im[0:H:6, 4:W:6]
+        # out[0::2, 1::2, 0] = im[1:H:6, 2:W:6]
+        # out[1::2, 0::2, 0] = im[1:H:6, 0:W:6]
+        # out[1::2, 1::2, 0] = im[2:H:6, 4:W:6]
+        # # R
+        # out[0::2, 0::2, 1] = im[3:H:6, 1:W:6]
+        # out[0::2, 1::2, 1] = im[5:H:6, 1:W:6]
+        # out[1::2, 0::2, 1] = im[4:H:6, 3:W:6]
+        # out[1::2, 1::2, 1] = im[4:H:6, 5:W:6]
+
+        # # GGGGG
+        # out[0::2, 0::2, 2] = im[1:H:6, 1:W:6]
+        # out[0::2, 1::2, 2] = im[1:H:6, 4:W:6]
+        # out[1::2, 0::2, 2] = im[4:H:6, 1:W:6]
+        # out[1::2, 1::2, 2] = im[4:H:6, 4:W:6]
+
+        # out[:, :, 3] = im[0:H:3, 0:W:3]
+        # out[:, :, 4] = im[0:H:3, 2:W:3]
+        # out[:, :, 5] = im[2:H:3, 0:W:3]
+        # out[:, :, 6] = im[2:H:3, 2:W:3]
+        # # B
+        # out[0::2, 0::2, 7] = im[0:H:6, 1:W:6]
+        # out[0::2, 1::2, 7] = im[1:H:6, 3:W:6]
+        # out[1::2, 0::2, 7] = im[2:H:6, 1:W:6]
+        # out[1::2, 1::2, 7] = im[1:H:6, 5:W:6]
+        # # B
+        # out[0::2, 0::2, 8] = im[4:H:6, 0:W:6]
+        # out[0::2, 1::2, 8] = im[3:H:6, 4:W:6]
+        # out[1::2, 0::2, 8] = im[4:H:6, 2:W:6]
+        # out[1::2, 1::2, 8] = im[5:H:6, 4:W:6]
         # R
-        out[0::2, 0::2, 1] = im[3:H:6, 1:W:6]
-        out[0::2, 1::2, 1] = im[5:H:6, 1:W:6]
-        out[1::2, 0::2, 1] = im[4:H:6, 3:W:6]
-        out[1::2, 1::2, 1] = im[4:H:6, 5:W:6]
+        # out[0::2, 0::2, 0] = im[0:H:6, 2:W:6]
+        # out[0::2, 1::2, 0] = im[0:H:6, 4:W:6]
+        # out[1::2, 0::2, 0] = im[1:H:6, 0:W:6]
+        # out[1::2, 1::2, 0] = im[2:H:6, 3:W:6]
+        # # R
+        # out[0::2, 0::2, 1] = im[3:H:6, 1:W:6]
+        # out[0::2, 1::2, 1] = im[3:H:6, 5:W:6]
+        # out[1::2, 0::2, 1] = im[5:H:6, 0:W:6]
+        # out[1::2, 1::2, 1] = im[4:H:6, 3:W:6]
 
-        # GGGGG
-        out[0::2, 0::2, 2] = im[1:H:6, 1:W:6]
-        out[0::2, 1::2, 2] = im[1:H:6, 4:W:6]
-        out[1::2, 0::2, 2] = im[4:H:6, 1:W:6]
-        out[1::2, 1::2, 2] = im[4:H:6, 4:W:6]
+        # # GGGGG
+        # out[0::2, 0::2, 2] = im[0:H:6, 0:W:6]
+        # out[0::2, 1::2, 2] = im[0:H:6, 3:W:6]
+        # out[1::2, 0::2, 2] = im[3:H:6, 0:W:6]
+        # out[1::2, 1::2, 2] = im[3:H:6, 3:W:6]
 
-        out[:, :, 3] = im[0:H:3, 0:W:3]
-        out[:, :, 4] = im[0:H:3, 2:W:3]
-        out[:, :, 5] = im[2:H:3, 0:W:3]
-        out[:, :, 6] = im[2:H:3, 2:W:3]
-        # B
-        out[0::2, 0::2, 7] = im[0:H:6, 1:W:6]
-        out[0::2, 1::2, 7] = im[1:H:6, 3:W:6]
-        out[1::2, 0::2, 7] = im[2:H:6, 1:W:6]
-        out[1::2, 1::2, 7] = im[1:H:6, 5:W:6]
-        # B
-        out[0::2, 0::2, 8] = im[4:H:6, 0:W:6]
-        out[0::2, 1::2, 8] = im[3:H:6, 4:W:6]
-        out[1::2, 0::2, 8] = im[4:H:6, 2:W:6]
-        out[1::2, 1::2, 8] = im[5:H:6, 4:W:6]
+        # out[:, :, 3] = im[1:H:3, 1:W:3]
+        # out[:, :, 4] = im[1:H:3, 2:W:3]
+        # out[:, :, 5] = im[2:H:3, 1:W:3]
+        # out[:, :, 6] = im[2:H:3, 2:W:3]
+        # # B
+        # out[0::2, 0::2, 7] = im[0:H:6, 1:W:6]
+        # out[0::2, 1::2, 7] = im[0:H:6, 5:W:6]
+        # out[1::2, 0::2, 7] = im[2:H:6, 0:W:6]
+        # out[1::2, 1::2, 7] = im[1:H:6, 3:W:6]
+        # # B
+        # out[0::2, 0::2, 8] = im[3:H:6, 2:W:6]
+        # out[0::2, 1::2, 8] = im[3:H:6, 4:W:6]
+        # out[1::2, 0::2, 8] = im[4:H:6, 0:W:6]
+        # out[1::2, 1::2, 8] = im[5:H:6, 3:W:6]
         # # GGGGG
         # out[0::2, 0::2, 0] = im[0:H:6, 0:W:6]
         # out[0::2, 1::2, 0] = im[0:H:6, 3:W:6]
@@ -342,40 +378,40 @@ class FujiDataset_eval(Dataset):
         # out[1::2, 0::2, 8] = im[5:H:6, 0:W:6]
         # out[1::2, 1::2, 8] = im[4:H:6, 3:W:6]
 
-        # # 0 R
-        # out[0::2, 0::2, 0] = im[0:H:6, 0:W:6]
-        # out[0::2, 1::2, 0] = im[0:H:6, 4:W:6]
-        # out[1::2, 0::2, 0] = im[3:H:6, 1:W:6]
-        # out[1::2, 1::2, 0] = im[3:H:6, 3:W:6]
+        # 0 R
+        out[0::2, 0::2, 0] = im[0:H:6, 0:W:6]
+        out[0::2, 1::2, 0] = im[0:H:6, 4:W:6]
+        out[1::2, 0::2, 0] = im[3:H:6, 1:W:6]
+        out[1::2, 1::2, 0] = im[3:H:6, 3:W:6]
 
-        # # 1 G
-        # out[0::2, 0::2, 1] = im[0:H:6, 2:W:6]
-        # out[0::2, 1::2, 1] = im[0:H:6, 5:W:6]
-        # out[1::2, 0::2, 1] = im[3:H:6, 2:W:6]
-        # out[1::2, 1::2, 1] = im[3:H:6, 5:W:6]
+        # 1 G
+        out[0::2, 0::2, 1] = im[0:H:6, 2:W:6]
+        out[0::2, 1::2, 1] = im[0:H:6, 5:W:6]
+        out[1::2, 0::2, 1] = im[3:H:6, 2:W:6]
+        out[1::2, 1::2, 1] = im[3:H:6, 5:W:6]
 
-        # # 1 B
-        # out[0::2, 0::2, 2] = im[0:H:6, 1:W:6]
-        # out[0::2, 1::2, 2] = im[0:H:6, 3:W:6]
-        # out[1::2, 0::2, 2] = im[3:H:6, 0:W:6]
-        # out[1::2, 1::2, 2] = im[3:H:6, 4:W:6]
+        # 1 B
+        out[0::2, 0::2, 2] = im[0:H:6, 1:W:6]
+        out[0::2, 1::2, 2] = im[0:H:6, 3:W:6]
+        out[1::2, 0::2, 2] = im[3:H:6, 0:W:6]
+        out[1::2, 1::2, 2] = im[3:H:6, 4:W:6]
 
-        # # 4 R
-        # out[0::2, 0::2, 3] = im[1:H:6, 2:W:6]
-        # out[0::2, 1::2, 3] = im[2:H:6, 5:W:6]
-        # out[1::2, 0::2, 3] = im[5:H:6, 2:W:6]
-        # out[1::2, 1::2, 3] = im[4:H:6, 5:W:6]
+        # 4 R
+        out[0::2, 0::2, 3] = im[1:H:6, 2:W:6]
+        out[0::2, 1::2, 3] = im[2:H:6, 5:W:6]
+        out[1::2, 0::2, 3] = im[5:H:6, 2:W:6]
+        out[1::2, 1::2, 3] = im[4:H:6, 5:W:6]
 
-        # # 5 B
-        # out[0::2, 0::2, 4] = im[2:H:6, 2:W:6]
-        # out[0::2, 1::2, 4] = im[1:H:6, 5:W:6]
-        # out[1::2, 0::2, 4] = im[4:H:6, 2:W:6]
-        # out[1::2, 1::2, 4] = im[5:H:6, 5:W:6]
+        # 5 B
+        out[0::2, 0::2, 4] = im[2:H:6, 2:W:6]
+        out[0::2, 1::2, 4] = im[1:H:6, 5:W:6]
+        out[1::2, 0::2, 4] = im[4:H:6, 2:W:6]
+        out[1::2, 1::2, 4] = im[5:H:6, 5:W:6]
 
-        # out[:, :, 5] = im[1:H:3, 0:W:3]
-        # out[:, :, 6] = im[1:H:3, 1:W:3]
-        # out[:, :, 7] = im[2:H:3, 0:W:3]
-        # out[:, :, 8] = im[2:H:3, 1:W:3]
+        out[:, :, 5] = im[1:H:3, 0:W:3]
+        out[:, :, 6] = im[1:H:3, 1:W:3]
+        out[:, :, 7] = im[2:H:3, 0:W:3]
+        out[:, :, 8] = im[2:H:3, 1:W:3]
         
        
         return out

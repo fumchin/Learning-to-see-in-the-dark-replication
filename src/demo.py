@@ -37,23 +37,28 @@ if __name__ == '__main__':
     test_dataset = FujiDataset_eval(cfg.root, cfg.test_file_name, None)
     
     train_dataloader = DataLoader(train_dataset, shuffle=True, batch_size=1)
-    validation_dataloader = DataLoader(validation_dataset, shuffle=True, batch_size=cfg.batch_size)
+    validation_dataloader = DataLoader(validation_dataset, shuffle=True, batch_size=1)
     test_dataloader = DataLoader(test_dataset, shuffle=True, batch_size=cfg.batch_size)
 
     model_eval = UNet().to(device)
     # model_eval = UNet()
     best_checkpoint = torch.load(os.path.join(checkpoint_path, 'best_model.pt'), map_location=device)
-    # best_checkpoint = torch.load(os.path.join(checkpoint_path, 'best_model.pt'))
+    # best_checkpoint = torch.load(os.path.join(checkpoint_path, 'checkpoint_epoch_8.pt'))
     model_eval.load_state_dict(best_checkpoint['model_state_dict'])
     model_eval.eval()
     # loss_fn = nn.L1Loss()
-    demo_path = os.path.join(checkpoint_path, 'demo_train')
+    if cfg.demo_type == "train":
+        demo_path = os.path.join(checkpoint_path, 'demo_train')
+        dataloader = train_dataloader
+    elif cfg.demo_type == "val":
+        demo_path = os.path.join(checkpoint_path, 'demo_val')
+        dataloader = validation_dataloader
     
     if not os.path.exists(os.path.join(demo_path)):
         os.makedirs(demo_path)
     with torch.no_grad():
         
-        for count, (input, target, src) in enumerate(train_dataloader):
+        for count, (input, target, src) in enumerate(dataloader):
         # for count, (features, label) in enumerate(train_dataloader):
 
             input = input.to(device)
@@ -70,19 +75,19 @@ if __name__ == '__main__':
                 pred_img = pred_img.permute(1, 2, 0)
                 pred_img = pred_img.detach().cpu().numpy()
                 # pred_img = ((pred_img/np.max(pred_img))*255).astype(np.uint8)
-                imageio.imwrite(os.path.join(demo_path, 'pred_' + str(count) + '_' + str(index) + ".png"),pred_img) 
+                imageio.imwrite(os.path.join(demo_path, 'pred_' + str(count) + '_' + str(index) + ".jpg"),pred_img) 
                 
                 src_img = src[index, :, :,:]
                 src_img = torch.tensor(src_img)
                 src_img = src_img.permute(1, 2, 0)
                 src_img = src_img.detach().cpu().numpy()
                 # target_img = (target_img*255).astype(np.uint8)
-                imageio.imwrite(os.path.join(demo_path, 'src_' + str(count) + '_' + str(index) + ".png"),src_img) 
+                imageio.imwrite(os.path.join(demo_path, 'src_' + str(count) + '_' + str(index) + ".jpg"),src_img) 
 
                 target_img = target[index, :, :,:]
                 target_img = torch.tensor(target_img)
                 target_img = target_img.permute(1, 2, 0)
                 target_img = target_img.detach().cpu().numpy()
                 # target_img = ((target_img/np.max(target_img))*255).astype(np.uint8)
-                imageio.imwrite(os.path.join(demo_path, 'target_' + str(count) + '_' + str(index) + ".png"),target_img) 
+                imageio.imwrite(os.path.join(demo_path, 'target_' + str(count) + '_' + str(index) + ".jpg"),target_img) 
 

@@ -6,6 +6,7 @@ from glob import glob
 from itertools import cycle
 from torchmetrics.functional import peak_signal_noise_ratio, structural_similarity_index_measure
 from torchvision import transforms
+from sklearn.model_selection import train_test_split
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -25,6 +26,7 @@ matplotlib.use('Agg')
 def train(model, train_dataloader, validation_dataloader, loss_fn, optimizer, device, epochs, checkpoint_path):
     val_loss_min = math.inf
     validation_psnr_max = 0
+    training_psnr_max = 0
     training_loss_list = []
     validation_loss_list = []
     training_psnr_list = []
@@ -58,8 +60,9 @@ def train(model, train_dataloader, validation_dataloader, loss_fn, optimizer, de
             'optimizer_state_dict': optimizer.state_dict(),
             }, os.path.join(checkpoint_path, f'checkpoint_epoch_{i}.pt'))
         
-        # if validation_loss < val_loss_min:
-        if validation_psnr_max < validation_psnr:
+        if validation_loss < val_loss_min:
+        # if validation_psnr_max < validation_psnr:
+        # if training_psnr_max < training_psnr:
             torch.save({
             'epoch': i,
             'model_state_dict': model.state_dict(),
@@ -68,6 +71,7 @@ def train(model, train_dataloader, validation_dataloader, loss_fn, optimizer, de
             }, os.path.join(checkpoint_path, f'best_model.pt'))
 
             # loss_min = validation_loss
+            # training_psnr_max = training_psnr
             val_loss_min = validation_loss
 
             output_txt = os.path.join(checkpoint_path, 'best.txt')
@@ -101,8 +105,8 @@ def train(model, train_dataloader, validation_dataloader, loss_fn, optimizer, de
         plt.plot(epoch_list, validation_ssim_list, 'r')
         plt.savefig(os.path.join(checkpoint_path, f'{cfg.model_name}_ssim.png'))
 
-def reduce_mean(out_im, gt_im):
-    return torch.abs(out_im - gt_im).mean()
+# def reduce_mean(out_im, gt_im):
+#     return torch.abs(out_im - gt_im).mean()
     
 def train_single_epoch(model, train_dataloader, validation_dataloader, loss_fn, optimizer, device):
     training_loss = 0
@@ -115,17 +119,20 @@ def train_single_epoch(model, train_dataloader, validation_dataloader, loss_fn, 
     model.train()
     for input, target in tqdm(train_dataloader):
         input, target = input.to(device), target.to(device)
+        
         prediction = model(input)
-        # loss = loss_fn(prediction, target)
-        loss = reduce_mean(prediction, target)
+        loss = loss_fn(prediction, target)
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+        # loss = reduce_mean(prediction, target)
         training_loss += loss.item()
         psnr = peak_signal_noise_ratio(prediction, target)
         training_psnr += psnr.item()
         ssim = structural_similarity_index_measure(prediction, target)
         training_ssim += ssim.item()
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
+        
+        
     training_loss = (training_loss) / len(train_dataloader)
     training_psnr = (training_psnr) / len(train_dataloader)
     training_ssim = (training_ssim) / len(train_dataloader)
@@ -134,14 +141,15 @@ def train_single_epoch(model, train_dataloader, validation_dataloader, loss_fn, 
     for input, target in tqdm(validation_dataloader):
         input, target = input.to(device), target.to(device)
         prediction = model(input)
-        # loss = loss_fn(prediction, target)
-        loss = reduce_mean(prediction, target)
+        loss = loss_fn(prediction, target)
+        # loss = reduce_mean(prediction, target)
         validation_loss += loss.item()
 
         psnr = peak_signal_noise_ratio(prediction, target)
         validation_psnr += psnr.item()
         ssim = structural_similarity_index_measure(prediction, target)
         validation_ssim += ssim.item()
+        # break
 
     validation_loss = (validation_loss) / len(validation_dataloader)
     validation_psnr = (validation_psnr) / len(validation_dataloader)
@@ -170,14 +178,22 @@ if __name__ == '__main__':
     train_dataset = FujiDataset(cfg.root, cfg.train_preprocess_file_name, transform)
     validation_dataset = FujiDataset(cfg.root, cfg.val_preprocess_file_name, None)
     test_dataset = FujiDataset(cfg.root, cfg.test_file_name, None)
+
+    # small_train_dataset, _= train_test_split(train_dataset,train_size=0.4, random_state=0)
+    # small_validation_dataset, _= train_test_split(validation_dataset,train_size=0.4, random_state=0)
+    # small_test_dataset, _= train_test_split(test_dataset,train_size=0.4, random_state=0)
     
     train_dataloader = DataLoader(train_dataset, shuffle=True, batch_size=cfg.batch_size)
     validation_dataloader = DataLoader(validation_dataset, shuffle=True, batch_size=cfg.batch_size)
     test_dataloader = DataLoader(test_dataset, shuffle=True, batch_size=cfg.batch_size)
 
+    # train_dataloader = DataLoader(small_train_dataset, shuffle=True, batch_size=cfg.batch_size)
+    # validation_dataloader = DataLoader(small_validation_dataset, shuffle=True, batch_size=cfg.batch_size)
+    # test_dataloader = DataLoader(small_test_dataset, shuffle=True, batch_size=cfg.batch_size)
+
     model = UNet().to(device)
     loss_fn = nn.L1Loss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=cfg.learning_rate, betas=(0.9, 0.999))
+    optimizer = torch.optim.Adam(model.parameters(), lr=cfg.learning_rate)
     model.train()
     train(model=model, train_dataloader=train_dataloader, validation_dataloader=validation_dataloader, loss_fn=loss_fn, optimizer=optimizer, device=device, epochs=cfg.epochs, checkpoint_path=checkpoint_path)
 
