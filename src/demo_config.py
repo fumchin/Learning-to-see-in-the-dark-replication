@@ -10,7 +10,7 @@ val_preprocess_file_name = "val_preprocess_list.txt"
 # training parameters
 model_name = "color_fix"
 # train or val
-demo_type = "train" 
+demo_type = "val" 
 learning_rate = 0.0001
 batch_size = 6
 epochs = 100
