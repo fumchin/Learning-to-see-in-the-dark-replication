@@ -75,19 +75,19 @@ if __name__ == '__main__':
                 pred_img = pred_img.permute(1, 2, 0)
                 pred_img = pred_img.detach().cpu().numpy()
                 # pred_img = ((pred_img/np.max(pred_img))*255).astype(np.uint8)
-                imageio.imwrite(os.path.join(demo_path, 'pred_' + str(count) + '_' + str(index) + ".jpg"),pred_img) 
+                imageio.imwrite(os.path.join(demo_path, 'pred_' + str(count) + '_' + str(index) + ".png"),pred_img) 
                 
                 src_img = src[index, :, :,:]
                 src_img = torch.tensor(src_img)
                 src_img = src_img.permute(1, 2, 0)
                 src_img = src_img.detach().cpu().numpy()
                 # target_img = (target_img*255).astype(np.uint8)
-                imageio.imwrite(os.path.join(demo_path, 'src_' + str(count) + '_' + str(index) + ".jpg"),src_img) 
+                imageio.imwrite(os.path.join(demo_path, 'src_' + str(count) + '_' + str(index) + ".png"),src_img) 
 
                 target_img = target[index, :, :,:]
                 target_img = torch.tensor(target_img)
                 target_img = target_img.permute(1, 2, 0)
                 target_img = target_img.detach().cpu().numpy()
                 # target_img = ((target_img/np.max(target_img))*255).astype(np.uint8)
-                imageio.imwrite(os.path.join(demo_path, 'target_' + str(count) + '_' + str(index) + ".jpg"),target_img) 
+                imageio.imwrite(os.path.join(demo_path, 'target_' + str(count) + '_' + str(index) + ".png"),target_img) 
 
